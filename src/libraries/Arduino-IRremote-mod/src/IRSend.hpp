@@ -32,6 +32,8 @@
 #ifndef _IR_SEND_HPP
 #define _IR_SEND_HPP
 
+#include "../../../logging/logging.h"
+
 /*
  * This improves readability of code by avoiding a lot of #if defined clauses
  */
@@ -142,6 +144,13 @@ void IRsend::begin(uint_fast8_t aSendPin, bool aEnableLEDFeedback, uint_fast8_t 
     (void) aFeedbackLEDPin;
 #endif
 }
+
+//<<bsg
+
+ uint32_t tRawData[]={0xAB054F};
+
+
+//bag>>
 
 /**
  * Interprets and sends a IRData structure.
@@ -258,6 +267,23 @@ size_t IRsend::write(IRData *aIRSendData, int_fast8_t aNumberOfRepeats) {
     } else if (tProtocol == LEGO_PF) {
         sendLegoPowerFunctions(tAddress, tCommand, tCommand >> 4, tIsRepeat); // send 5 autorepeats
 #endif
+   } else if (tProtocol == PULSE_DISTANCE ) {
+        ADDLOG_INFO(LOG_FEATURE_IR, (char *)"**** PULSE_DISTANCE");
+        // sendLegoPowerFunctions(tAddress, tCommand, tCommand >> 4, tIsRepeat); // send 5 autorepeats
+        sendPulseDistanceWidthFromArray(38, //uint_fast8_t aFrequencyKHz,
+	3950, //unsigned int aHeaderMarkMicros,
+4000,//unsigned int aHeaderSpaceMicros,
+500,//unsigned int aOneMarkMicros,
+2000,//unsigned int aOneSpaceMicros,
+500,//unsigned int aZeroMarkMicros,
+1000,//unsigned int aZeroSpaceMicros,
+&tRawData[0],//uint32_t *aDecodedRawDataArray,
+24,//unsigned int aNumberOfBits,
+PROTOCOL_IS_LSB_FIRST, //bool aMSBFirst,
+0,//bool aSendStopBit,
+0, //unsigned int aRepeatPeriodMillis,
+0 //int_fast8_t aNumberOfRepeats
+);
 
     } else {
         return 0; // Not supported by write. E.g for BANG_OLUFSEN
