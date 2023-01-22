@@ -19,7 +19,8 @@ APP_VERSION ?= dev_$(TIMESTAMP)
 APPS_BUILD_CMD ?= build.sh
 
 # Default target is to run OpenBK7231T build
-all: OpenBK7231T
+#all: OpenBK7231T
+all: OpenBK7231N
 
 # Full target will clean then build all
 .PHONY: full

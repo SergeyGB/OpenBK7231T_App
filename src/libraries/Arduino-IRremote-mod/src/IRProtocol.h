@@ -32,43 +32,44 @@
 #ifndef _IR_PROTOCOL_H
 #define _IR_PROTOCOL_H
 
-/**
- * An enum consisting of all supported formats.
- * You do NOT need to remove entries from this list when disabling protocols!
- * !!!Must be the same order as ProtocolNames in IRReceive.hpp!!!
- */
+ /**
+  * An enum consisting of all supported formats.
+  * You do NOT need to remove entries from this list when disabling protocols!
+  * !!!Must be the same order as ProtocolNames in IRReceive.hpp!!!
+  */
 typedef enum {
-    UNKNOWN = 0,
+	UNKNOWN = 0,
 #if defined(SUPPORT_PULSE_WIDTH_DECODING) // The only known pulse width protocol is Sony
-    PULSE_WIDTH,
+	PULSE_WIDTH,
 #endif
-    PULSE_DISTANCE,
-    APPLE,
-    DENON,
-    JVC,
-    LG,
-    LG2,
-    NEC,
-    NEC2, /* NEC with full frame as repeat */
-    ONKYO,
-    PANASONIC,
-    KASEIKYO,
-    KASEIKYO_DENON,
-    KASEIKYO_SHARP,
-    KASEIKYO_JVC,
-    KASEIKYO_MITSUBISHI,
-    RC5,
-    RC6,
-    SAMSUNG,
-    SAMSUNG_LG,
-    SHARP,
-    SONY,
-    /* Now the exotic protocols */
-    BANG_OLUFSEN,
-    BOSEWAVE,
-    LEGO_PF,
-    MAGIQUEST,
-    WHYNTER,
+	PULSE_DISTANCE,
+	APPLE,
+	DENON,
+	JVC,
+	LG,
+	LG2,
+	NEC,
+	NEC2, /* NEC with full frame as repeat */
+	ONKYO,
+	PANASONIC,
+	KASEIKYO,
+	KASEIKYO_DENON,
+	KASEIKYO_SHARP,
+	KASEIKYO_JVC,
+	KASEIKYO_MITSUBISHI,
+	RC5,
+	RC6,
+	SAMSUNG,
+	SAMSUNG_LG,
+	SHARP,
+	SONY,
+	/* Now the exotic protocols */
+	BANG_OLUFSEN,
+	BOSEWAVE,
+	LEGO_PF,
+	MAGIQUEST,
+	WHYNTER,
+	PRONTO,
 
 } decode_type_t;
 
@@ -100,25 +101,26 @@ const char string_BoseWave[] PROGMEM = "BoseWave";
 const char string_Lego[] PROGMEM = "Lego";
 const char string_MagiQuest[] PROGMEM = "MagiQuest";
 const char string_Whynter[] PROGMEM = "Whynter";
+const char string_Pronto[] PROGMEM = "Pronto";
 
 // fwd declaration
 class IRsend;
 
 struct PulsePauseWidthProtocolConstants {
-    decode_type_t ProtocolIndex;
-    uint_fast8_t FrequencyKHz;
-    unsigned int HeaderMarkMicros;
-    unsigned int HeaderSpaceMicros;
-    unsigned int OneMarkMicros;
-    unsigned int OneSpaceMicros;
-    unsigned int ZeroMarkMicros;
-    unsigned int ZeroSpaceMicros;
-    bool isMSBFirst;
-    bool hasStopBit;
-    unsigned int RepeatPeriodMillis;
+	decode_type_t ProtocolIndex;
+	uint_fast8_t FrequencyKHz;
+	unsigned int HeaderMarkMicros;
+	unsigned int HeaderSpaceMicros;
+	unsigned int OneMarkMicros;
+	unsigned int OneSpaceMicros;
+	unsigned int ZeroMarkMicros;
+	unsigned int ZeroSpaceMicros;
+	bool isMSBFirst;
+	bool hasStopBit;
+	unsigned int RepeatPeriodMillis;
 
-    void (*SpecialSendRepeatFunction)(IRsend &sender); // using non member functions here saves up to 250 bytes for send demo
-//    void (IRsend::*SpecialSendRepeatFunction)();
+	void (*SpecialSendRepeatFunction)(IRsend& sender); // using non member functions here saves up to 250 bytes for send demo
+	//    void (IRsend::*SpecialSendRepeatFunction)();
 };
 
 #define PROTOCOL_IS_LSB_FIRST false

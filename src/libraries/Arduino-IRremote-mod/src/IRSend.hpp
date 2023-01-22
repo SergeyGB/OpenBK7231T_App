@@ -34,29 +34,29 @@
 
 #include "../../../logging/logging.h"
 
-/*
- * This improves readability of code by avoiding a lot of #if defined clauses
- */
+ /*
+  * This improves readability of code by avoiding a lot of #if defined clauses
+  */
 #if defined(IR_SEND_PIN)
 #define sendPin IR_SEND_PIN
 #endif
 
-/** \addtogroup Sending Sending IR data for multiple protocols
- * @{
- */
+  /** \addtogroup Sending Sending IR data for multiple protocols
+   * @{
+   */
 
-// The sender instance
+   // The sender instance
 #ifdef NOTHERE
 IRsend IrSender;
 #endif
 
 IRsend::IRsend() { // @suppress("Class members should be properly initialized")
 #if !defined(IR_SEND_PIN)
-    sendPin = 0;
+	sendPin = 0;
 #endif
 
 #if !defined(NO_LED_FEEDBACK_CODE)
-    setLEDFeedback(0, DO_NOT_ENABLE_LED_FEEDBACK);
+	setLEDFeedback(0, DO_NOT_ENABLE_LED_FEEDBACK);
 #endif
 }
 
@@ -65,9 +65,9 @@ IRsend::IRsend() { // @suppress("Class members should be properly initialized")
  * Only required to set LED feedback
  * Simple start with defaults - LED feedback enabled! Used if IR_SEND_PIN is defined. Saves program memory.
  */
-void IRsend::begin(){
+void IRsend::begin() {
 #  if !defined(NO_LED_FEEDBACK_CODE)
-    setLEDFeedback(USE_DEFAULT_FEEDBACK_LED_PIN, LED_FEEDBACK_ENABLED_FOR_SEND);
+	setLEDFeedback(USE_DEFAULT_FEEDBACK_LED_PIN, LED_FEEDBACK_ENABLED_FOR_SEND);
 #  endif
 }
 
@@ -78,22 +78,22 @@ void IRsend::begin(){
  */
 void IRsend::begin(bool aEnableLEDFeedback, uint_fast8_t aFeedbackLEDPin) {
 #if !defined(NO_LED_FEEDBACK_CODE)
-    bool tEnableLEDFeedback = DO_NOT_ENABLE_LED_FEEDBACK;
-    if(aEnableLEDFeedback) {
-        tEnableLEDFeedback = LED_FEEDBACK_ENABLED_FOR_SEND;
-    }
-    setLEDFeedback(aFeedbackLEDPin, tEnableLEDFeedback);
+	bool tEnableLEDFeedback = DO_NOT_ENABLE_LED_FEEDBACK;
+	if (aEnableLEDFeedback) {
+		tEnableLEDFeedback = LED_FEEDBACK_ENABLED_FOR_SEND;
+	}
+	setLEDFeedback(aFeedbackLEDPin, tEnableLEDFeedback);
 #else
-    (void) aEnableLEDFeedback;
-    (void) aFeedbackLEDPin;
+	(void)aEnableLEDFeedback;
+	(void)aFeedbackLEDPin;
 #endif
 }
 
 #else // defined(IR_SEND_PIN)
 IRsend::IRsend(uint_fast8_t aSendPin) { // @suppress("Class members should be properly initialized")
-    sendPin = aSendPin;
+	sendPin = aSendPin;
 #  if !defined(NO_LED_FEEDBACK_CODE)
-    setLEDFeedback(0, DO_NOT_ENABLE_LED_FEEDBACK);
+	setLEDFeedback(0, DO_NOT_ENABLE_LED_FEEDBACK);
 #  endif
 }
 
@@ -102,22 +102,22 @@ IRsend::IRsend(uint_fast8_t aSendPin) { // @suppress("Class members should be pr
  * @param aSendPin The Arduino pin number, where a IR sender diode is connected.
  */
 void IRsend::begin(uint_fast8_t aSendPin) {
-    sendPin = aSendPin;
+	sendPin = aSendPin;
 #  if !defined(NO_LED_FEEDBACK_CODE)
-    setLEDFeedback(USE_DEFAULT_FEEDBACK_LED_PIN, LED_FEEDBACK_ENABLED_FOR_SEND);
+	setLEDFeedback(USE_DEFAULT_FEEDBACK_LED_PIN, LED_FEEDBACK_ENABLED_FOR_SEND);
 #  endif
 }
 
 void IRsend::setSendPin(uint_fast8_t aSendPin) {
-    sendPin = aSendPin;
+	sendPin = aSendPin;
 }
 #endif // defined(IR_SEND_PIN)
 
-uint32_t IRsend::millis(){
-    return ::millis();
+uint32_t IRsend::millis() {
+	return ::millis();
 }
-void IRsend::delay(long int ms){
-    ::delay(ms);
+void IRsend::delay(long int ms) {
+	::delay(ms);
 }
 
 /**
@@ -128,29 +128,23 @@ void IRsend::delay(long int ms){
  */
 void IRsend::begin(uint_fast8_t aSendPin, bool aEnableLEDFeedback, uint_fast8_t aFeedbackLEDPin) {
 #if defined(IR_SEND_PIN)
-    (void) aSendPin; // for backwards compatibility
+	(void)aSendPin; // for backwards compatibility
 #else
-    sendPin = aSendPin;
+	sendPin = aSendPin;
 #endif
 
 #if !defined(NO_LED_FEEDBACK_CODE)
-    bool tEnableLEDFeedback = DO_NOT_ENABLE_LED_FEEDBACK;
-    if (aEnableLEDFeedback) {
-        tEnableLEDFeedback = LED_FEEDBACK_ENABLED_FOR_SEND;
-    }
-    setLEDFeedback(aFeedbackLEDPin, tEnableLEDFeedback);
+	bool tEnableLEDFeedback = DO_NOT_ENABLE_LED_FEEDBACK;
+	if (aEnableLEDFeedback) {
+		tEnableLEDFeedback = LED_FEEDBACK_ENABLED_FOR_SEND;
+	}
+	setLEDFeedback(aFeedbackLEDPin, tEnableLEDFeedback);
 #else
-    (void) aEnableLEDFeedback;
-    (void) aFeedbackLEDPin;
+	(void)aEnableLEDFeedback;
+	(void)aFeedbackLEDPin;
 #endif
 }
 
-//<<bsg
-
- uint32_t tRawData[]={0xAB054F};
-
-
-//bag>>
 
 /**
  * Interprets and sends a IRData structure.
@@ -158,137 +152,175 @@ void IRsend::begin(uint_fast8_t aSendPin, bool aEnableLEDFeedback, uint_fast8_t 
  * @param aNumberOfRepeats Number of repeats to send after the initial data if data is no repeat.
  * @return 1 if data sent, 0 if no data sent (i.e. for BANG_OLUFSEN)
  */
-size_t IRsend::write(IRData *aIRSendData, int_fast8_t aNumberOfRepeats) {
+size_t IRsend::write(IRData* aIRSendData, int_fast8_t aNumberOfRepeats) {
 
-    auto tProtocol = aIRSendData->protocol;
-    auto tAddress = aIRSendData->address;
-    auto tCommand = aIRSendData->command;
-    bool tIsRepeat = (aIRSendData->flags & IRDATA_FLAGS_IS_REPEAT);
-    if (tIsRepeat) {
-        aNumberOfRepeats = -1; // if aNumberOfRepeats < 0 then only a special repeat frame will be sent
-    }
-//    switch (tProtocol) { // 26 bytes bigger than if, else if, else
-//    case NEC:
-//        sendNEC(tAddress, tCommand, aNumberOfRepeats, tSendRepeat);
-//        break;
-//    case SAMSUNG:
-//        sendSamsung(tAddress, tCommand, aNumberOfRepeats);
-//        break;
-//    case SONY:
-//        sendSony(tAddress, tCommand, aNumberOfRepeats, aIRSendData->numberOfBits);
-//        break;
-//    case PANASONIC:
-//        sendPanasonic(tAddress, tCommand, aNumberOfRepeats);
-//        break;
-//    case DENON:
-//        sendDenon(tAddress, tCommand, aNumberOfRepeats);
-//        break;
-//    case SHARP:
-//        sendSharp(tAddress, tCommand, aNumberOfRepeats);
-//        break;
-//    case JVC:
-//        sendJVC((uint8_t) tAddress, (uint8_t) tCommand, aNumberOfRepeats); // casts are required to specify the right function
-//        break;
-//    case RC5:
-//        sendRC5(tAddress, tCommand, aNumberOfRepeats, !tSendRepeat); // No toggle for repeats
-//        break;
-//    case RC6:
-//        // No toggle for repeats//        sendRC6(tAddress, tCommand, aNumberOfRepeats, !tSendRepeat); // No toggle for repeats
-//        break;
-//    default:
-//        break;
-//    }
+	auto tProtocol = aIRSendData->protocol;
+	auto tAddress = aIRSendData->address;
+	auto tCommand = aIRSendData->command;
+	bool tIsRepeat = (aIRSendData->flags & IRDATA_FLAGS_IS_REPEAT);
+	if (tIsRepeat) {
+		aNumberOfRepeats = -1; // if aNumberOfRepeats < 0 then only a special repeat frame will be sent
+	}
+	//    switch (tProtocol) { // 26 bytes bigger than if, else if, else
+	//    case NEC:
+	//        sendNEC(tAddress, tCommand, aNumberOfRepeats, tSendRepeat);
+	//        break;
+	//    case SAMSUNG:
+	//        sendSamsung(tAddress, tCommand, aNumberOfRepeats);
+	//        break;
+	//    case SONY:
+	//        sendSony(tAddress, tCommand, aNumberOfRepeats, aIRSendData->numberOfBits);
+	//        break;
+	//    case PANASONIC:
+	//        sendPanasonic(tAddress, tCommand, aNumberOfRepeats);
+	//        break;
+	//    case DENON:
+	//        sendDenon(tAddress, tCommand, aNumberOfRepeats);
+	//        break;
+	//    case SHARP:
+	//        sendSharp(tAddress, tCommand, aNumberOfRepeats);
+	//        break;
+	//    case JVC:
+	//        sendJVC((uint8_t) tAddress, (uint8_t) tCommand, aNumberOfRepeats); // casts are required to specify the right function
+	//        break;
+	//    case RC5:
+	//        sendRC5(tAddress, tCommand, aNumberOfRepeats, !tSendRepeat); // No toggle for repeats
+	//        break;
+	//    case RC6:
+	//        // No toggle for repeats//        sendRC6(tAddress, tCommand, aNumberOfRepeats, !tSendRepeat); // No toggle for repeats
+	//        break;
+	//    default:
+	//        break;
+	//    }
 
-    /*
-     * Order of protocols is in guessed relevance :-)
-     */
-    if (tProtocol == NEC) {
-        sendNEC(tAddress, tCommand, aNumberOfRepeats);
+		/*
+		 * Order of protocols is in guessed relevance :-)
+		 */
+	if (tProtocol == NEC) {
+		sendNEC(tAddress, tCommand, aNumberOfRepeats);
 
-    } else if (tProtocol == SAMSUNG) {
-        sendSamsung(tAddress, tCommand, aNumberOfRepeats);
+	}
+	else if (tProtocol == SAMSUNG) {
+		sendSamsung(tAddress, tCommand, aNumberOfRepeats);
 
-    } else if (tProtocol == SAMSUNG_LG) {
-        sendSamsungLG(tAddress, tCommand, aNumberOfRepeats);
+	}
+	else if (tProtocol == SAMSUNG_LG) {
+		sendSamsungLG(tAddress, tCommand, aNumberOfRepeats);
 
-    } else if (tProtocol == SONY) {
-        sendSony(tAddress, tCommand, aNumberOfRepeats, aIRSendData->numberOfBits);
+	}
+	else if (tProtocol == SONY) {
+		sendSony(tAddress, tCommand, aNumberOfRepeats, aIRSendData->numberOfBits);
 
-    } else if (tProtocol == PANASONIC) {
-        sendPanasonic(tAddress, tCommand, aNumberOfRepeats);
+	}
+	else if (tProtocol == PANASONIC) {
+		sendPanasonic(tAddress, tCommand, aNumberOfRepeats);
 
-    } else if (tProtocol == DENON) {
-        sendDenon(tAddress, tCommand, aNumberOfRepeats);
+	}
+	else if (tProtocol == DENON) {
+		sendDenon(tAddress, tCommand, aNumberOfRepeats);
 
-    } else if (tProtocol == SHARP) {
-        sendSharp(tAddress, tCommand, aNumberOfRepeats);
+	}
+	else if (tProtocol == SHARP) {
+		sendSharp(tAddress, tCommand, aNumberOfRepeats);
 
-    } else if (tProtocol == LG) {
-        sendLG(tAddress, tCommand, aNumberOfRepeats);
+	}
+	else if (tProtocol == LG) {
+		sendLG(tAddress, tCommand, aNumberOfRepeats);
 
-    } else if (tProtocol == JVC) {
-        sendJVC((uint8_t) tAddress, (uint8_t) tCommand, aNumberOfRepeats); // casts are required to specify the right function
+	}
+	else if (tProtocol == JVC) {
+		sendJVC((uint8_t)tAddress, (uint8_t)tCommand, aNumberOfRepeats); // casts are required to specify the right function
 
-    } else if (tProtocol == RC5) {
-        sendRC5(tAddress, tCommand, aNumberOfRepeats, !tIsRepeat); // No toggle for repeats
+	}
+	else if (tProtocol == RC5) {
+		sendRC5(tAddress, tCommand, aNumberOfRepeats, !tIsRepeat); // No toggle for repeats
 
-    } else if (tProtocol == RC6) {
-        sendRC6(tAddress, tCommand, aNumberOfRepeats, !tIsRepeat); // No toggle for repeats
+	}
+	else if (tProtocol == RC6) {
+		sendRC6(tAddress, tCommand, aNumberOfRepeats, !tIsRepeat); // No toggle for repeats
 
-    } else if (tProtocol == KASEIKYO_JVC) {
-        sendKaseikyo_JVC(tAddress, tCommand, aNumberOfRepeats);
+	}
+	else if (tProtocol == KASEIKYO_JVC) {
+		sendKaseikyo_JVC(tAddress, tCommand, aNumberOfRepeats);
 
-    } else if (tProtocol == KASEIKYO_DENON) {
-        sendKaseikyo_Denon(tAddress, tCommand, aNumberOfRepeats);
+	}
+	else if (tProtocol == KASEIKYO_DENON) {
+		sendKaseikyo_Denon(tAddress, tCommand, aNumberOfRepeats);
 
-    } else if (tProtocol == KASEIKYO_SHARP) {
-        sendKaseikyo_Sharp(tAddress, tCommand, aNumberOfRepeats);
+	}
+	else if (tProtocol == KASEIKYO_SHARP) {
+		sendKaseikyo_Sharp(tAddress, tCommand, aNumberOfRepeats);
 
-    } else if (tProtocol == KASEIKYO_MITSUBISHI) {
-        sendKaseikyo_Mitsubishi(tAddress, tCommand, aNumberOfRepeats);
+	}
+	else if (tProtocol == KASEIKYO_MITSUBISHI) {
+		sendKaseikyo_Mitsubishi(tAddress, tCommand, aNumberOfRepeats);
 
-    } else if (tProtocol == NEC2) {
-        sendNEC2(tAddress, tCommand, aNumberOfRepeats);
+	}
+	else if (tProtocol == NEC2) {
+		sendNEC2(tAddress, tCommand, aNumberOfRepeats);
 
-    } else if (tProtocol == ONKYO) {
-        sendOnkyo(tAddress, tCommand, aNumberOfRepeats);
+	}
+	else if (tProtocol == ONKYO) {
+		sendOnkyo(tAddress, tCommand, aNumberOfRepeats);
 
-    } else if (tProtocol == APPLE) {
-        sendApple(tAddress, tCommand, aNumberOfRepeats);
+	}
+	else if (tProtocol == APPLE) {
+		sendApple(tAddress, tCommand, aNumberOfRepeats);
 
 #if !defined(EXCLUDE_EXOTIC_PROTOCOLS)
-    } else if (tProtocol == BOSEWAVE) {
-        sendBoseWave(tCommand, aNumberOfRepeats);
+	}
+	else if (tProtocol == BOSEWAVE) {
+		sendBoseWave(tCommand, aNumberOfRepeats);
 
-    } else if (tProtocol == MAGIQUEST) {
-        // we have a 32 bit ID/address
-        sendMagiQuest(aIRSendData->decodedRawData, tCommand);
+	}
+	else if (tProtocol == MAGIQUEST) {
+		// we have a 32 bit ID/address
+		sendMagiQuest(aIRSendData->decodedRawData, tCommand);
 
-    } else if (tProtocol == LEGO_PF) {
-        sendLegoPowerFunctions(tAddress, tCommand, tCommand >> 4, tIsRepeat); // send 5 autorepeats
+	}
+	else if (tProtocol == LEGO_PF) {
+		sendLegoPowerFunctions(tAddress, tCommand, tCommand >> 4, tIsRepeat); // send 5 autorepeats
 #endif
-   } else if (tProtocol == PULSE_DISTANCE ) {
-        ADDLOG_INFO(LOG_FEATURE_IR, (char *)"**** PULSE_DISTANCE");
-        // sendLegoPowerFunctions(tAddress, tCommand, tCommand >> 4, tIsRepeat); // send 5 autorepeats
-        sendPulseDistanceWidthFromArray(38, //uint_fast8_t aFrequencyKHz,
-	3950, //unsigned int aHeaderMarkMicros,
-4000,//unsigned int aHeaderSpaceMicros,
-500,//unsigned int aOneMarkMicros,
-2000,//unsigned int aOneSpaceMicros,
-500,//unsigned int aZeroMarkMicros,
-1000,//unsigned int aZeroSpaceMicros,
-&tRawData[0],//uint32_t *aDecodedRawDataArray,
-24,//unsigned int aNumberOfBits,
-PROTOCOL_IS_LSB_FIRST, //bool aMSBFirst,
-0,//bool aSendStopBit,
-0, //unsigned int aRepeatPeriodMillis,
-0 //int_fast8_t aNumberOfRepeats
-);
+	}
+	else if (tProtocol == PULSE_DISTANCE) {
+		ADDLOG_INFO(LOG_FEATURE_IR, (char*)"**** PULSE_DISTANCE");
+		//<<bsg
+		uint32_t tRawData[] = { 0xAB054F };
+		tRawData[0] = aIRSendData->decodedRawData;
 
-    } else {
-        return 0; // Not supported by write. E.g for BANG_OLUFSEN
-    }
-    return 1;
+		//bag>>
+		// sendLegoPowerFunctions(tAddress, tCommand, tCommand >> 4, tIsRepeat); // send 5 autorepeats
+
+		sendPulseDistanceWidthFromArray(38, //uint_fast8_t aFrequencyKHz,
+			3950, //unsigned int aHeaderMarkMicros,
+			3950,//unsigned int aHeaderSpaceMicros,
+			500,//unsigned int aOneMarkMicros,
+			2000,//unsigned int aOneSpaceMicros,
+			500,//unsigned int aZeroMarkMicros,
+			1000,//unsigned int aZeroSpaceMicros,
+			&tRawData[0],//uint32_t *aDecodedRawDataArray,
+			24,//unsigned int aNumberOfBits,
+			PROTOCOL_IS_LSB_FIRST, //bool aMSBFirst,
+			SEND_STOP_BIT,//bool aSendStopBit,
+			10, //unsigned int aRepeatPeriodMillis,
+			tIsRepeat //int_fast8_t aNumberOfRepeats
+		);
+	}
+	else if (tProtocol == PRONTO) {
+		uint16_t ProntoCode[56] = {
+			0x0000, 0x006D, 0x001A, 0x0000, 0x0099, 0x0099, 0x0014, 0x004A, 0x0014, 0x004C,
+			0x0014,	0x004A, 0x0014, 0x004C, 0x0014, 0x0026, 0x0014, 0x0026, 0x0012, 0x004C,
+			0x0014, 0x0026,	0x0014, 0x004C, 0x0012, 0x004C, 0x0014, 0x004C, 0x0012, 0x0026,
+			0x0014, 0x0028, 0x0012,	0x0026, 0x0014, 0x0026, 0x0014, 0x0024, 0x0014, 0x004C,
+			0x0014, 0x004C, 0x0012, 0x0026,	0x0014, 0x004C, 0x0014, 0x0026, 0x0014, 0x0024,
+			0x0014, 0x0026, 0x0014, 0x004C, 0x0014,	0x06C3
+		};
+		sendPronto(ProntoCode, 56);
+	}
+	else {
+		return 0; // Not supported by write. E.g for BANG_OLUFSEN
+	}
+	return 1;
 }
 
 /**
@@ -296,22 +328,23 @@ PROTOCOL_IS_LSB_FIRST, //bool aMSBFirst,
  * Raw data starts with a Mark. No leading space as in received timing data!
  */
 void IRsend::sendRaw(const uint16_t aBufferWithMicroseconds[], uint_fast16_t aLengthOfBuffer, uint_fast8_t aIRFrequencyKilohertz) {
-// Set IR carrier frequency
-    enableIROut(aIRFrequencyKilohertz);
+	// Set IR carrier frequency
+	enableIROut(aIRFrequencyKilohertz);
 
-    /*
-     * Raw data starts with a mark.
-     */
-    for (uint_fast16_t i = 0; i < aLengthOfBuffer; i++) {
-        if (i & 1) {
-            // Odd
-            space(aBufferWithMicroseconds[i]);
-        } else {
-            mark(aBufferWithMicroseconds[i]);
-        }
-    }
+	/*
+	 * Raw data starts with a mark.
+	 */
+	for (uint_fast16_t i = 0; i < aLengthOfBuffer; i++) {
+		if (i & 1) {
+			// Odd
+			space(aBufferWithMicroseconds[i]);
+		}
+		else {
+			mark(aBufferWithMicroseconds[i]);
+		}
+	}
 
-    IrReceiver.restartAfterSend();
+	IrReceiver.restartAfterSend();
 }
 
 /**
@@ -319,19 +352,20 @@ void IRsend::sendRaw(const uint16_t aBufferWithMicroseconds[], uint_fast16_t aLe
  * Raw data starts with a Mark. No leading space as in received timing data!
  */
 void IRsend::sendRaw(const uint8_t aBufferWithTicks[], uint_fast16_t aLengthOfBuffer, uint_fast8_t aIRFrequencyKilohertz) {
-// Set IR carrier frequency
-    enableIROut(aIRFrequencyKilohertz);
+	// Set IR carrier frequency
+	enableIROut(aIRFrequencyKilohertz);
 
-    for (uint_fast16_t i = 0; i < aLengthOfBuffer; i++) {
-        if (i & 1) {
-            // Odd
-            space(aBufferWithTicks[i] * MICROS_PER_TICK);
-        } else {
-            mark(aBufferWithTicks[i] * MICROS_PER_TICK);
-        }
-    }
-    IRLedOff();  // Always end with the LED off
-    IrReceiver.restartAfterSend();
+	for (uint_fast16_t i = 0; i < aLengthOfBuffer; i++) {
+		if (i & 1) {
+			// Odd
+			space(aBufferWithTicks[i] * MICROS_PER_TICK);
+		}
+		else {
+			mark(aBufferWithTicks[i] * MICROS_PER_TICK);
+		}
+	}
+	IRLedOff();  // Always end with the LED off
+	IrReceiver.restartAfterSend();
 }
 
 /**
@@ -339,25 +373,26 @@ void IRsend::sendRaw(const uint8_t aBufferWithTicks[], uint_fast16_t aLengthOfBu
  * Raw data starts with a Mark. No leading space as in received timing data!
  */
 void IRsend::sendRaw_P(const uint16_t aBufferWithMicroseconds[], uint_fast16_t aLengthOfBuffer,
-        uint_fast8_t aIRFrequencyKilohertz) {
+	uint_fast8_t aIRFrequencyKilohertz) {
 #if !defined(__AVR__)
-    sendRaw(aBufferWithMicroseconds, aLengthOfBuffer, aIRFrequencyKilohertz); // Let the function work for non AVR platforms
+	sendRaw(aBufferWithMicroseconds, aLengthOfBuffer, aIRFrequencyKilohertz); // Let the function work for non AVR platforms
 #else
-// Set IR carrier frequency
-    enableIROut(aIRFrequencyKilohertz);
-    /*
-     * Raw data starts with a mark
-     */
-    for (uint_fast16_t i = 0; i < aLengthOfBuffer; i++) {
-        unsigned int duration = pgm_read_word(&aBufferWithMicroseconds[i]);
-        if (i & 1) {
-            // Odd
-            space(duration);
-        } else {
-            mark(duration);
-        }
-    }
-    IrReceiver.restartAfterSend();
+	// Set IR carrier frequency
+	enableIROut(aIRFrequencyKilohertz);
+	/*
+	 * Raw data starts with a mark
+	 */
+	for (uint_fast16_t i = 0; i < aLengthOfBuffer; i++) {
+		unsigned int duration = pgm_read_word(&aBufferWithMicroseconds[i]);
+		if (i & 1) {
+			// Odd
+			space(duration);
+		}
+		else {
+			mark(duration);
+		}
+	}
+	IrReceiver.restartAfterSend();
 #endif
 }
 
@@ -367,22 +402,23 @@ void IRsend::sendRaw_P(const uint16_t aBufferWithMicroseconds[], uint_fast16_t a
  */
 void IRsend::sendRaw_P(const uint8_t aBufferWithTicks[], uint_fast16_t aLengthOfBuffer, uint_fast8_t aIRFrequencyKilohertz) {
 #if !defined(__AVR__)
-    sendRaw(aBufferWithTicks, aLengthOfBuffer, aIRFrequencyKilohertz); // Let the function work for non AVR platforms
+	sendRaw(aBufferWithTicks, aLengthOfBuffer, aIRFrequencyKilohertz); // Let the function work for non AVR platforms
 #else
-// Set IR carrier frequency
-    enableIROut(aIRFrequencyKilohertz);
+	// Set IR carrier frequency
+	enableIROut(aIRFrequencyKilohertz);
 
-    for (uint_fast16_t i = 0; i < aLengthOfBuffer; i++) {
-        unsigned int duration = pgm_read_byte(&aBufferWithTicks[i]) * (unsigned int) MICROS_PER_TICK;
-        if (i & 1) {
-            // Odd
-            space(duration);
-        } else {
-            mark(duration);
-        }
-    }
-    IRLedOff();  // Always end with the LED off
-    IrReceiver.restartAfterSend();
+	for (uint_fast16_t i = 0; i < aLengthOfBuffer; i++) {
+		unsigned int duration = pgm_read_byte(&aBufferWithTicks[i]) * (unsigned int)MICROS_PER_TICK;
+		if (i & 1) {
+			// Odd
+			space(duration);
+		}
+		else {
+			mark(duration);
+		}
+	}
+	IRLedOff();  // Always end with the LED off
+	IrReceiver.restartAfterSend();
 #endif
 }
 
@@ -393,60 +429,62 @@ void IRsend::sendRaw_P(const uint8_t aBufferWithTicks[], uint_fast16_t aLengthOf
  * Stop bit is always sent
  */
 void IRsend::sendPulseDistanceWidthFromArray(uint_fast8_t aFrequencyKHz, unsigned int aHeaderMarkMicros,
-        unsigned int aHeaderSpaceMicros, unsigned int aOneMarkMicros, unsigned int aOneSpaceMicros, unsigned int aZeroMarkMicros,
-        unsigned int aZeroSpaceMicros, uint32_t *aDecodedRawDataArray, unsigned int aNumberOfBits, bool aMSBFirst,
-        bool aSendStopBit, unsigned int aRepeatPeriodMillis, int_fast8_t aNumberOfRepeats) {
+	unsigned int aHeaderSpaceMicros, unsigned int aOneMarkMicros, unsigned int aOneSpaceMicros, unsigned int aZeroMarkMicros,
+	unsigned int aZeroSpaceMicros, uint32_t* aDecodedRawDataArray, unsigned int aNumberOfBits, bool aMSBFirst,
+	bool aSendStopBit, unsigned int aRepeatPeriodMillis, int_fast8_t aNumberOfRepeats) {
 
-    // Set IR carrier frequency
-    enableIROut(aFrequencyKHz);
+	// Set IR carrier frequency
+	enableIROut(aFrequencyKHz);
 
-    uint_fast8_t tNumberOfCommands = aNumberOfRepeats + 1;
-    uint_fast8_t tNumberOf32BitChunks = ((aNumberOfBits - 1) / 32) + 1;
+	uint_fast8_t tNumberOfCommands = aNumberOfRepeats + 1;
+	uint_fast8_t tNumberOf32BitChunks = ((aNumberOfBits - 1) / 32) + 1;
 
-    while (tNumberOfCommands > 0) {
-        unsigned long tStartOfFrameMillis = millis();
+	while (tNumberOfCommands > 0) {
+		unsigned long tStartOfFrameMillis = millis();
 
-        // Header
-        mark(aHeaderMarkMicros);
-        space(aHeaderSpaceMicros);
+		// Header
+		mark(aHeaderMarkMicros);
+		space(aHeaderSpaceMicros);
 
-        for (uint_fast8_t i = 0; i < tNumberOf32BitChunks; ++i) {
-            uint8_t tNumberOfBitsForOneSend;
-            bool tSendStopBit;
-            if (aNumberOfBits > 32) {
-                tNumberOfBitsForOneSend = 32;
-            } else {
-                tNumberOfBitsForOneSend = aNumberOfBits;
-            }
-            if (i == (tNumberOf32BitChunks - 1)) {
-                // End of data
-                tNumberOfBitsForOneSend = aNumberOfBits;
-                tSendStopBit = aSendStopBit;
-            } else {
-                // intermediate data
-                tNumberOfBitsForOneSend = 32;
-                tSendStopBit = false;
-            }
+		for (uint_fast8_t i = 0; i < tNumberOf32BitChunks; ++i) {
+			uint8_t tNumberOfBitsForOneSend;
+			bool tSendStopBit;
+			if (aNumberOfBits > 32) {
+				tNumberOfBitsForOneSend = 32;
+			}
+			else {
+				tNumberOfBitsForOneSend = aNumberOfBits;
+			}
+			if (i == (tNumberOf32BitChunks - 1)) {
+				// End of data
+				tNumberOfBitsForOneSend = aNumberOfBits;
+				tSendStopBit = aSendStopBit;
+			}
+			else {
+				// intermediate data
+				tNumberOfBitsForOneSend = 32;
+				tSendStopBit = false;
+			}
 
-            sendPulseDistanceWidthData(aOneMarkMicros, aOneSpaceMicros, aZeroMarkMicros, aZeroSpaceMicros, aDecodedRawDataArray[i],
-                    tNumberOfBitsForOneSend, aMSBFirst, tSendStopBit);
+			sendPulseDistanceWidthData(aOneMarkMicros, aOneSpaceMicros, aZeroMarkMicros, aZeroSpaceMicros, aDecodedRawDataArray[i],
+				tNumberOfBitsForOneSend, aMSBFirst, tSendStopBit);
 
-            aNumberOfBits -= 32;
-        }
+			aNumberOfBits -= 32;
+		}
 
-        tNumberOfCommands--;
-        // skip last delay!
-        if (tNumberOfCommands > 0) {
-            /*
-             * Check and fallback for wrong RepeatPeriodMillis parameter. I.e the repeat period must be greater than each frame duration.
-             */
-            auto tFrameDurationMillis = millis() - tStartOfFrameMillis;
-            if (aRepeatPeriodMillis > tFrameDurationMillis) {
-                delay(aRepeatPeriodMillis - tFrameDurationMillis);
-            }
-        }
-    }
-    IrReceiver.restartAfterSend();
+		tNumberOfCommands--;
+		// skip last delay!
+		if (tNumberOfCommands > 0) {
+			/*
+			 * Check and fallback for wrong RepeatPeriodMillis parameter. I.e the repeat period must be greater than each frame duration.
+			 */
+			auto tFrameDurationMillis = millis() - tStartOfFrameMillis;
+			if (aRepeatPeriodMillis > tFrameDurationMillis) {
+				delay(aRepeatPeriodMillis - tFrameDurationMillis);
+			}
+		}
+	}
+	IrReceiver.restartAfterSend();
 }
 
 /**
@@ -455,149 +493,154 @@ void IRsend::sendPulseDistanceWidthFromArray(uint_fast8_t aFrequencyKHz, unsigne
  * The output always ends with a space
  * Stop bit is always sent
  */
-void IRsend::sendPulseDistanceWidthFromArray(PulsePauseWidthProtocolConstants *aProtocolConstants, uint32_t *aDecodedRawDataArray,
-        unsigned int aNumberOfBits, int_fast8_t aNumberOfRepeats) {
+void IRsend::sendPulseDistanceWidthFromArray(PulsePauseWidthProtocolConstants* aProtocolConstants, uint32_t* aDecodedRawDataArray,
+	unsigned int aNumberOfBits, int_fast8_t aNumberOfRepeats) {
 
-    // Set IR carrier frequency
-    enableIROut(aProtocolConstants->FrequencyKHz);
+	// Set IR carrier frequency
+	enableIROut(aProtocolConstants->FrequencyKHz);
 
-    uint_fast8_t tNumberOf32BitChunks = ((aNumberOfBits - 1) / 32) + 1;
+	uint_fast8_t tNumberOf32BitChunks = ((aNumberOfBits - 1) / 32) + 1;
 
-    uint_fast8_t tNumberOfCommands = aNumberOfRepeats + 1;
-    while (tNumberOfCommands > 0) {
-        unsigned long tStartOfFrameMillis = millis();
+	uint_fast8_t tNumberOfCommands = aNumberOfRepeats + 1;
+	while (tNumberOfCommands > 0) {
+		unsigned long tStartOfFrameMillis = millis();
 
-        // Header
-        mark(aProtocolConstants->HeaderMarkMicros);
-        space(aProtocolConstants->HeaderSpaceMicros);
-        bool tHasStopBit = aProtocolConstants->hasStopBit;
+		// Header
+		mark(aProtocolConstants->HeaderMarkMicros);
+		space(aProtocolConstants->HeaderSpaceMicros);
+		bool tHasStopBit = aProtocolConstants->hasStopBit;
 
-        for (uint_fast8_t i = 0; i < tNumberOf32BitChunks; ++i) {
-            uint8_t tNumberOfBitsForOneSend;
+		for (uint_fast8_t i = 0; i < tNumberOf32BitChunks; ++i) {
+			uint8_t tNumberOfBitsForOneSend;
 
-            if (i == (tNumberOf32BitChunks - 1)) {
-                // End of data
-                tNumberOfBitsForOneSend = aNumberOfBits;
-                aProtocolConstants->hasStopBit = tHasStopBit;
-            } else {
-                // intermediate data
-                tNumberOfBitsForOneSend = 32;
-                aProtocolConstants->hasStopBit = false;
-            }
-            sendPulseDistanceWidthData(aProtocolConstants, aDecodedRawDataArray[i], tNumberOfBitsForOneSend);
-            aNumberOfBits -= 32;
-        }
+			if (i == (tNumberOf32BitChunks - 1)) {
+				// End of data
+				tNumberOfBitsForOneSend = aNumberOfBits;
+				aProtocolConstants->hasStopBit = tHasStopBit;
+			}
+			else {
+				// intermediate data
+				tNumberOfBitsForOneSend = 32;
+				aProtocolConstants->hasStopBit = false;
+			}
+			sendPulseDistanceWidthData(aProtocolConstants, aDecodedRawDataArray[i], tNumberOfBitsForOneSend);
+			aNumberOfBits -= 32;
+		}
 
-        tNumberOfCommands--;
-        // skip last delay!
-        if (tNumberOfCommands > 0) {
-            /*
-             * Check and fallback for wrong RepeatPeriodMillis parameter. I.e the repeat period must be greater than each frame duration.
-             */
-            auto tFrameDurationMillis = millis() - tStartOfFrameMillis;
-            if (aProtocolConstants->RepeatPeriodMillis > tFrameDurationMillis) {
-                delay(aProtocolConstants->RepeatPeriodMillis - tFrameDurationMillis);
-            }
-        }
-    }
-    IrReceiver.restartAfterSend();
+		tNumberOfCommands--;
+		// skip last delay!
+		if (tNumberOfCommands > 0) {
+			/*
+			 * Check and fallback for wrong RepeatPeriodMillis parameter. I.e the repeat period must be greater than each frame duration.
+			 */
+			auto tFrameDurationMillis = millis() - tStartOfFrameMillis;
+			if (aProtocolConstants->RepeatPeriodMillis > tFrameDurationMillis) {
+				delay(aProtocolConstants->RepeatPeriodMillis - tFrameDurationMillis);
+			}
+		}
+	}
+	IrReceiver.restartAfterSend();
 }
 /**
  * Sends PulseDistance frames and repeats
  * @param aNumberOfRepeats If < 0 then only a (special) repeat frame will be sent
  */
-void IRsend::sendPulseDistanceWidth(PulsePauseWidthProtocolConstants *aProtocolConstants, uint32_t aData,
-        uint_fast8_t aNumberOfBits, int_fast8_t aNumberOfRepeats) {
+void IRsend::sendPulseDistanceWidth(PulsePauseWidthProtocolConstants* aProtocolConstants, uint32_t aData,
+	uint_fast8_t aNumberOfBits, int_fast8_t aNumberOfRepeats) {
 
-    if (aNumberOfRepeats < 0) {
-        if (aProtocolConstants->SpecialSendRepeatFunction != NULL) {
-            aProtocolConstants->SpecialSendRepeatFunction(*this);
-            return;
-        } else {
-            aNumberOfRepeats = 0; // send a plain frame as repeat
-        }
-    }
+	if (aNumberOfRepeats < 0) {
+		if (aProtocolConstants->SpecialSendRepeatFunction != NULL) {
+			aProtocolConstants->SpecialSendRepeatFunction(*this);
+			return;
+		}
+		else {
+			aNumberOfRepeats = 0; // send a plain frame as repeat
+		}
+	}
 
-    // Set IR carrier frequency
-    enableIROut(aProtocolConstants->FrequencyKHz);
+	// Set IR carrier frequency
+	enableIROut(aProtocolConstants->FrequencyKHz);
 
-    uint_fast8_t tNumberOfCommands = aNumberOfRepeats + 1;
-    while (tNumberOfCommands > 0) {
-        unsigned long tStartOfFrameMillis = millis();
+	uint_fast8_t tNumberOfCommands = aNumberOfRepeats + 1;
+	while (tNumberOfCommands > 0) {
+		unsigned long tStartOfFrameMillis = millis();
 
-        if (tNumberOfCommands < ((uint_fast8_t) aNumberOfRepeats + 1) && aProtocolConstants->SpecialSendRepeatFunction != NULL) {
-            // send special repeat
-            aProtocolConstants->SpecialSendRepeatFunction(*this);
-        } else {
-            // Header and regular frame
-            mark(aProtocolConstants->HeaderMarkMicros);
-            space(aProtocolConstants->HeaderSpaceMicros);
-            sendPulseDistanceWidthData(aProtocolConstants, aData, aNumberOfBits);
-        }
+		if (tNumberOfCommands < ((uint_fast8_t)aNumberOfRepeats + 1) && aProtocolConstants->SpecialSendRepeatFunction != NULL) {
+			// send special repeat
+			aProtocolConstants->SpecialSendRepeatFunction(*this);
+		}
+		else {
+			// Header and regular frame
+			mark(aProtocolConstants->HeaderMarkMicros);
+			space(aProtocolConstants->HeaderSpaceMicros);
+			sendPulseDistanceWidthData(aProtocolConstants, aData, aNumberOfBits);
+		}
 
-        tNumberOfCommands--;
-        // skip last delay!
-        if (tNumberOfCommands > 0) {
-            /*
-             * Check and fallback for wrong RepeatPeriodMillis parameter. I.e the repeat period must be greater than each frame duration.
-             */
-            auto tFrameDurationMillis = millis() - tStartOfFrameMillis;
-            if (aProtocolConstants->RepeatPeriodMillis > tFrameDurationMillis) {
-                delay(aProtocolConstants->RepeatPeriodMillis - tFrameDurationMillis);
-            }
-        }
-    }
-    IrReceiver.restartAfterSend();
+		tNumberOfCommands--;
+		// skip last delay!
+		if (tNumberOfCommands > 0) {
+			/*
+			 * Check and fallback for wrong RepeatPeriodMillis parameter. I.e the repeat period must be greater than each frame duration.
+			 */
+			auto tFrameDurationMillis = millis() - tStartOfFrameMillis;
+			if (aProtocolConstants->RepeatPeriodMillis > tFrameDurationMillis) {
+				delay(aProtocolConstants->RepeatPeriodMillis - tFrameDurationMillis);
+			}
+		}
+	}
+	IrReceiver.restartAfterSend();
 }
 
 /**
  * Sends PulseDistance frames and repeats
  */
 void IRsend::sendPulseDistanceWidth(uint_fast8_t aFrequencyKHz, unsigned int aHeaderMarkMicros, unsigned int aHeaderSpaceMicros,
-        unsigned int aOneMarkMicros, unsigned int aOneSpaceMicros, unsigned int aZeroMarkMicros, unsigned int aZeroSpaceMicros,
-        uint32_t aData, uint_fast8_t aNumberOfBits, bool aMSBFirst, bool aSendStopBit, unsigned int aRepeatPeriodMillis,
-        int_fast8_t aNumberOfRepeats, void (*aSpecialSendRepeatFunction)(IRsend &sender)) {
+	unsigned int aOneMarkMicros, unsigned int aOneSpaceMicros, unsigned int aZeroMarkMicros, unsigned int aZeroSpaceMicros,
+	uint32_t aData, uint_fast8_t aNumberOfBits, bool aMSBFirst, bool aSendStopBit, unsigned int aRepeatPeriodMillis,
+	int_fast8_t aNumberOfRepeats, void (*aSpecialSendRepeatFunction)(IRsend& sender)) {
 
-    if (aNumberOfRepeats < 0) {
-        if (aSpecialSendRepeatFunction != NULL) {
-            aSpecialSendRepeatFunction(*this);
-            return;
-        } else {
-            aNumberOfRepeats = 0; // send a plain frame as repeat
-        }
-    }
+	if (aNumberOfRepeats < 0) {
+		if (aSpecialSendRepeatFunction != NULL) {
+			aSpecialSendRepeatFunction(*this);
+			return;
+		}
+		else {
+			aNumberOfRepeats = 0; // send a plain frame as repeat
+		}
+	}
 
-    // Set IR carrier frequency
-    enableIROut(aFrequencyKHz);
+	// Set IR carrier frequency
+	enableIROut(aFrequencyKHz);
 
-    uint_fast8_t tNumberOfCommands = aNumberOfRepeats + 1;
-    while (tNumberOfCommands > 0) {
-        unsigned long tStartOfFrameMillis = millis();
+	uint_fast8_t tNumberOfCommands = aNumberOfRepeats + 1;
+	while (tNumberOfCommands > 0) {
+		unsigned long tStartOfFrameMillis = millis();
 
-        if (tNumberOfCommands < ((uint_fast8_t) aNumberOfRepeats + 1) && aSpecialSendRepeatFunction != NULL) {
-            // send special repeat
-            aSpecialSendRepeatFunction(*this);
-        } else {
-            // Header and regular frame
-            mark(aHeaderMarkMicros);
-            space(aHeaderSpaceMicros);
-            sendPulseDistanceWidthData(aOneMarkMicros, aOneSpaceMicros, aZeroMarkMicros, aZeroSpaceMicros, aData, aNumberOfBits,
-                    aMSBFirst, aSendStopBit);
-        }
+		if (tNumberOfCommands < ((uint_fast8_t)aNumberOfRepeats + 1) && aSpecialSendRepeatFunction != NULL) {
+			// send special repeat
+			aSpecialSendRepeatFunction(*this);
+		}
+		else {
+			// Header and regular frame
+			mark(aHeaderMarkMicros);
+			space(aHeaderSpaceMicros);
+			sendPulseDistanceWidthData(aOneMarkMicros, aOneSpaceMicros, aZeroMarkMicros, aZeroSpaceMicros, aData, aNumberOfBits,
+				aMSBFirst, aSendStopBit);
+		}
 
-        tNumberOfCommands--;
-        // skip last delay!
-        if (tNumberOfCommands > 0) {
-            /*
-             * Check and fallback for wrong RepeatPeriodMillis parameter. I.e the repeat period must be greater than each frame duration.
-             */
-            auto tFrameDurationMillis = millis() - tStartOfFrameMillis;
-            if (aRepeatPeriodMillis > tFrameDurationMillis) {
-                delay(aRepeatPeriodMillis - tFrameDurationMillis);
-            }
-        }
-    }
-    IrReceiver.restartAfterSend();
+		tNumberOfCommands--;
+		// skip last delay!
+		if (tNumberOfCommands > 0) {
+			/*
+			 * Check and fallback for wrong RepeatPeriodMillis parameter. I.e the repeat period must be greater than each frame duration.
+			 */
+			auto tFrameDurationMillis = millis() - tStartOfFrameMillis;
+			if (aRepeatPeriodMillis > tFrameDurationMillis) {
+				delay(aRepeatPeriodMillis - tFrameDurationMillis);
+			}
+		}
+	}
+	IrReceiver.restartAfterSend();
 }
 
 /**
@@ -605,12 +648,12 @@ void IRsend::sendPulseDistanceWidth(uint_fast8_t aFrequencyKHz, unsigned int aHe
  * The output always ends with a space
  * Each additional call costs 16 bytes program space
  */
-void IRsend::sendPulseDistanceWidthData(PulsePauseWidthProtocolConstants *aProtocolConstants, uint32_t aData,
-        uint_fast8_t aNumberOfBits) {
+void IRsend::sendPulseDistanceWidthData(PulsePauseWidthProtocolConstants* aProtocolConstants, uint32_t aData,
+	uint_fast8_t aNumberOfBits) {
 
-    sendPulseDistanceWidthData(aProtocolConstants->OneMarkMicros, aProtocolConstants->OneSpaceMicros,
-            aProtocolConstants->ZeroMarkMicros, aProtocolConstants->ZeroSpaceMicros, aData, aNumberOfBits,
-            aProtocolConstants->isMSBFirst, aProtocolConstants->hasStopBit);
+	sendPulseDistanceWidthData(aProtocolConstants->OneMarkMicros, aProtocolConstants->OneSpaceMicros,
+		aProtocolConstants->ZeroMarkMicros, aProtocolConstants->ZeroSpaceMicros, aData, aNumberOfBits,
+		aProtocolConstants->isMSBFirst, aProtocolConstants->hasStopBit);
 }
 
 /**
@@ -618,32 +661,34 @@ void IRsend::sendPulseDistanceWidthData(PulsePauseWidthProtocolConstants *aProto
  * The output always ends with a space
  */
 void IRsend::sendPulseDistanceWidthData(unsigned int aOneMarkMicros, unsigned int aOneSpaceMicros, unsigned int aZeroMarkMicros,
-        unsigned int aZeroSpaceMicros, uint32_t aData, uint_fast8_t aNumberOfBits, bool aMSBFirst, bool aSendStopBit) {
+	unsigned int aZeroSpaceMicros, uint32_t aData, uint_fast8_t aNumberOfBits, bool aMSBFirst, bool aSendStopBit) {
 
-//    if (aMSBFirst) {  // Send the MSB first.
-    // For MSBFirst, send data from MSB to LSB until mask bit is shifted out
-    uint32_t tMask = 1UL << (aNumberOfBits - 1);
-    for (uint_fast8_t i = aNumberOfBits; i > 0; i--) {
-        if ((aMSBFirst && (aData & tMask)) || (!aMSBFirst && (aData & 1))) {
-            IR_TRACE_PRINT('1');
-            mark(aOneMarkMicros);
-            space(aOneSpaceMicros);
-        } else {
-            IR_TRACE_PRINT('0');
-            mark(aZeroMarkMicros);
-            space(aZeroSpaceMicros);
-        }
-        if (aMSBFirst) {
-            tMask >>= 1;
-        } else {
-            aData >>= 1;
-        }
-    }
-    if (aSendStopBit) {
-        IR_TRACE_PRINT('S');
-        mark(aZeroMarkMicros); // Use aZeroMarkMicros for stop bits. This seems to be correct for all protocols :-)
-    }
-    IR_TRACE_PRINTLN(F(""));
+	//    if (aMSBFirst) {  // Send the MSB first.
+		// For MSBFirst, send data from MSB to LSB until mask bit is shifted out
+	uint32_t tMask = 1UL << (aNumberOfBits - 1);
+	for (uint_fast8_t i = aNumberOfBits; i > 0; i--) {
+		if ((aMSBFirst && (aData & tMask)) || (!aMSBFirst && (aData & 1))) {
+			IR_TRACE_PRINT('1');
+			mark(aOneMarkMicros);
+			space(aOneSpaceMicros);
+		}
+		else {
+			IR_TRACE_PRINT('0');
+			mark(aZeroMarkMicros);
+			space(aZeroSpaceMicros);
+		}
+		if (aMSBFirst) {
+			tMask >>= 1;
+		}
+		else {
+			aData >>= 1;
+		}
+	}
+	if (aSendStopBit) {
+		IR_TRACE_PRINT('S');
+		mark(aZeroMarkMicros); // Use aZeroMarkMicros for stop bits. This seems to be correct for all protocols :-)
+	}
+	IR_TRACE_PRINTLN(F(""));
 }
 
 /**
@@ -656,41 +701,43 @@ void IRsend::sendPulseDistanceWidthData(unsigned int aOneMarkMicros, unsigned in
  */
 void IRsend::sendBiphaseData(unsigned int aBiphaseTimeUnit, uint32_t aData, uint_fast8_t aNumberOfBits) {
 
-    IR_TRACE_PRINT(F("0x"));
-    IR_TRACE_PRINT(aData, HEX);
+	IR_TRACE_PRINT(F("0x"));
+	IR_TRACE_PRINT(aData, HEX);
 
-    IR_TRACE_PRINT(F(" S"));
+	IR_TRACE_PRINT(F(" S"));
 
-// Data - Biphase code MSB first
-// prepare for start with sending the start bit, which is 1
-    uint32_t tMask = 1UL << aNumberOfBits;    // mask is now set for the virtual start bit
-    uint_fast8_t tLastBitValue = 1;    // Start bit is a 1
-    bool tNextBitIsOne = 1;    // Start bit is a 1
-    for (uint_fast8_t i = aNumberOfBits + 1; i > 0; i--) {
-        bool tCurrentBitIsOne = tNextBitIsOne;
-        tMask >>= 1;
-        tNextBitIsOne = ((aData & tMask) != 0) || (i == 1); // true for last bit to avoid extension of mark
-        if (tCurrentBitIsOne) {
-            IR_TRACE_PRINT('1');
-            space(aBiphaseTimeUnit);
-            if (tNextBitIsOne) {
-                mark(aBiphaseTimeUnit);
-            } else {
-                // if next bit is 0, extend the current mark in order to generate a continuous signal without short breaks
-                mark(2 * aBiphaseTimeUnit);
-            }
-            tLastBitValue = 1;
+	// Data - Biphase code MSB first
+	// prepare for start with sending the start bit, which is 1
+	uint32_t tMask = 1UL << aNumberOfBits;    // mask is now set for the virtual start bit
+	uint_fast8_t tLastBitValue = 1;    // Start bit is a 1
+	bool tNextBitIsOne = 1;    // Start bit is a 1
+	for (uint_fast8_t i = aNumberOfBits + 1; i > 0; i--) {
+		bool tCurrentBitIsOne = tNextBitIsOne;
+		tMask >>= 1;
+		tNextBitIsOne = ((aData & tMask) != 0) || (i == 1); // true for last bit to avoid extension of mark
+		if (tCurrentBitIsOne) {
+			IR_TRACE_PRINT('1');
+			space(aBiphaseTimeUnit);
+			if (tNextBitIsOne) {
+				mark(aBiphaseTimeUnit);
+			}
+			else {
+				// if next bit is 0, extend the current mark in order to generate a continuous signal without short breaks
+				mark(2 * aBiphaseTimeUnit);
+			}
+			tLastBitValue = 1;
 
-        } else {
-            IR_TRACE_PRINT('0');
-            if (!tLastBitValue) {
-                mark(aBiphaseTimeUnit);
-            }
-            space(aBiphaseTimeUnit);
-            tLastBitValue = 0;
-        }
-    }
-    IR_TRACE_PRINTLN(F(""));
+		}
+		else {
+			IR_TRACE_PRINT('0');
+			if (!tLastBitValue) {
+				mark(aBiphaseTimeUnit);
+			}
+			space(aBiphaseTimeUnit);
+			tLastBitValue = 0;
+		}
+	}
+	IR_TRACE_PRINTLN(F(""));
 }
 
 /**
@@ -703,131 +750,131 @@ void IRsend::mark(unsigned int aMarkMicros) {
 
 #if defined(SEND_PWM_BY_TIMER) || defined(USE_NO_SEND_PWM)
 #  if !defined(NO_LED_FEEDBACK_CODE)
-    if (FeedbackLEDControl.LedFeedbackEnabled == LED_FEEDBACK_ENABLED_FOR_SEND) {
-        setFeedbackLED(true);
-    }
+	if (FeedbackLEDControl.LedFeedbackEnabled == LED_FEEDBACK_ENABLED_FOR_SEND) {
+		setFeedbackLED(true);
+	}
 #  endif
 #endif
 
 #if defined(SEND_PWM_BY_TIMER)
-    /*
-     * Generate hardware PWM signal
-     */
-    ENABLE_SEND_PWM_BY_TIMER; // Enable timer or ledcWrite() generated PWM output
-    customDelayMicroseconds(aMarkMicros);
-    IRLedOff();// disables hardware PWM and manages feedback LED
-    return;
+	/*
+	 * Generate hardware PWM signal
+	 */
+	ENABLE_SEND_PWM_BY_TIMER; // Enable timer or ledcWrite() generated PWM output
+	customDelayMicroseconds(aMarkMicros);
+	IRLedOff();// disables hardware PWM and manages feedback LED
+	return;
 
 #elif defined(USE_NO_SEND_PWM)
-    /*
-     * Here we generate no carrier PWM, just simulate an active low receiver signal.
-     */
+	/*
+	 * Here we generate no carrier PWM, just simulate an active low receiver signal.
+	 */
 #  if defined(USE_OPEN_DRAIN_OUTPUT_FOR_SEND_PIN) && !defined(OUTPUT_OPEN_DRAIN)
-    pinModeFast(sendPin, OUTPUT); // active state for mimicking open drain
+	pinModeFast(sendPin, OUTPUT); // active state for mimicking open drain
 #  else
-    digitalWriteFast(sendPin, LOW); // Set output to active low.
+	digitalWriteFast(sendPin, LOW); // Set output to active low.
 #  endif
 
-    customDelayMicroseconds(aMarkMicros);
-    IRLedOff();
+	customDelayMicroseconds(aMarkMicros);
+	IRLedOff();
 #  if !defined(NO_LED_FEEDBACK_CODE)
-    if (FeedbackLEDControl.LedFeedbackEnabled == LED_FEEDBACK_ENABLED_FOR_SEND) {
-        setFeedbackLED(false);
-    }
-    return;
+	if (FeedbackLEDControl.LedFeedbackEnabled == LED_FEEDBACK_ENABLED_FOR_SEND) {
+		setFeedbackLED(false);
+	}
+	return;
 #  endif
 
 #else // defined(SEND_PWM_BY_TIMER)
-    /*
-     * Generate PWM by bit banging
-     */
-    unsigned long tStartMicros = micros();
-    unsigned long tNextPeriodEnding = tStartMicros;
-    unsigned long tMicros;
+	/*
+	 * Generate PWM by bit banging
+	 */
+	unsigned long tStartMicros = micros();
+	unsigned long tNextPeriodEnding = tStartMicros;
+	unsigned long tMicros;
 #  if !defined(NO_LED_FEEDBACK_CODE)
-    bool FeedbackLedIsActive = false;
+	bool FeedbackLedIsActive = false;
 #  endif
 
-    do {
-//        digitalToggleFast(_IR_TIMING_TEST_PIN);
-        /*
-         * Output the PWM pulse
-         */
-        noInterrupts(); // do not let interrupts extend the short on period
+	do {
+		//        digitalToggleFast(_IR_TIMING_TEST_PIN);
+				/*
+				 * Output the PWM pulse
+				 */
+		noInterrupts(); // do not let interrupts extend the short on period
 #  if defined(USE_OPEN_DRAIN_OUTPUT_FOR_SEND_PIN)
 #    if defined(OUTPUT_OPEN_DRAIN)
-        digitalWriteFast(sendPin, LOW); // set output with pin mode OUTPUT_OPEN_DRAIN to active low
+		digitalWriteFast(sendPin, LOW); // set output with pin mode OUTPUT_OPEN_DRAIN to active low
 #    else
-        pinModeFast(sendPin, OUTPUT); // active state for mimicking open drain
+		pinModeFast(sendPin, OUTPUT); // active state for mimicking open drain
 #    endif
 #  else
-        // 3.5 us from FeedbackLed on to pin setting. 5.7 us from call of mark() to pin setting incl. setting of feedback pin.
-        // 4.3 us from do{ to pin setting if sendPin is no constant
-        digitalWriteFast(sendPin, HIGH);
+		// 3.5 us from FeedbackLed on to pin setting. 5.7 us from call of mark() to pin setting incl. setting of feedback pin.
+		// 4.3 us from do{ to pin setting if sendPin is no constant
+		digitalWriteFast(sendPin, HIGH);
 #  endif
-        delayMicroseconds (periodOnTimeMicros); // this is normally implemented by a blocking wait
+		delayMicroseconds(periodOnTimeMicros); // this is normally implemented by a blocking wait
 
-        /*
-         * Output the PWM pause
-         */
+		/*
+		 * Output the PWM pause
+		 */
 #  if defined(USE_OPEN_DRAIN_OUTPUT_FOR_SEND_PIN) && !defined(OUTPUT_OPEN_DRAIN)
 #    if defined(OUTPUT_OPEN_DRAIN)
-        digitalWriteFast(sendPin, HIGH); // Set output with pin mode OUTPUT_OPEN_DRAIN to inactive high.
+		digitalWriteFast(sendPin, HIGH); // Set output with pin mode OUTPUT_OPEN_DRAIN to inactive high.
 #    else
-        pinModeFast(sendPin, INPUT); // to mimic the open drain inactive state
+		pinModeFast(sendPin, INPUT); // to mimic the open drain inactive state
 #    endif
 
 #  else
-        digitalWriteFast(sendPin, LOW);
+		digitalWriteFast(sendPin, LOW);
 #  endif
-        interrupts(); // Enable interrupts - to keep micros correct- for the longer off period 3.4 us until receive ISR is active (for 7 us + pop's)
+		interrupts(); // Enable interrupts - to keep micros correct- for the longer off period 3.4 us until receive ISR is active (for 7 us + pop's)
 
 #  if !defined(NO_LED_FEEDBACK_CODE)
-        /*
-         * Delayed call of setFeedbackLED() to get better timing
-         */
-        if (!FeedbackLedIsActive) {
-            FeedbackLedIsActive = true;
-            if (FeedbackLEDControl.LedFeedbackEnabled == LED_FEEDBACK_ENABLED_FOR_SEND) {
-                setFeedbackLED(true);
-            }
-        }
+		/*
+		 * Delayed call of setFeedbackLED() to get better timing
+		 */
+		if (!FeedbackLedIsActive) {
+			FeedbackLedIsActive = true;
+			if (FeedbackLEDControl.LedFeedbackEnabled == LED_FEEDBACK_ENABLED_FOR_SEND) {
+				setFeedbackLED(true);
+			}
+		}
 #  endif
-        /*
-         * PWM pause timing
-         * Minimal pause duration is 4.3 us if NO_LED_FEEDBACK_CODE is defined
-         */
-        tNextPeriodEnding += periodTimeMicros;
-        do {
-            tMicros = micros(); // we have only 4 us resolution for AVR @16MHz
-            /*
-             * Exit the forever loop if aMarkMicros has reached
-             */
-            unsigned int tDeltaMicros = tMicros - tStartMicros;
+		/*
+		 * PWM pause timing
+		 * Minimal pause duration is 4.3 us if NO_LED_FEEDBACK_CODE is defined
+		 */
+		tNextPeriodEnding += periodTimeMicros;
+		do {
+			tMicros = micros(); // we have only 4 us resolution for AVR @16MHz
+			/*
+			 * Exit the forever loop if aMarkMicros has reached
+			 */
+			unsigned int tDeltaMicros = tMicros - tStartMicros;
 #if defined(__AVR__)
-//            tDeltaMicros += (160 / CLOCKS_PER_MICRO); // adding this once increases program size !
+			//            tDeltaMicros += (160 / CLOCKS_PER_MICRO); // adding this once increases program size !
 #  if !defined(NO_LED_FEEDBACK_CODE)
-            if (tDeltaMicros >= aMarkMicros - (30 + (112 / CLOCKS_PER_MICRO))) { // 30 to be constant. Using periodTimeMicros increases program size too much.
-            // reset feedback led in the last pause before end
-                if (FeedbackLEDControl.LedFeedbackEnabled == LED_FEEDBACK_ENABLED_FOR_SEND) {
-                    setFeedbackLED(false);
-                }
-            }
+			if (tDeltaMicros >= aMarkMicros - (30 + (112 / CLOCKS_PER_MICRO))) { // 30 to be constant. Using periodTimeMicros increases program size too much.
+				// reset feedback led in the last pause before end
+				if (FeedbackLEDControl.LedFeedbackEnabled == LED_FEEDBACK_ENABLED_FOR_SEND) {
+					setFeedbackLED(false);
+				}
+			}
 #  endif
-            // Just getting variables and check for end condition takes minimal 3.8 us
-            if (tDeltaMicros >= aMarkMicros - (112 / CLOCKS_PER_MICRO)) { // To compensate for call duration - 112 is an empirical value
+			// Just getting variables and check for end condition takes minimal 3.8 us
+			if (tDeltaMicros >= aMarkMicros - (112 / CLOCKS_PER_MICRO)) { // To compensate for call duration - 112 is an empirical value
 #else
-                if (tDeltaMicros >= aMarkMicros) {
+			if (tDeltaMicros >= aMarkMicros) {
 #  if !defined(NO_LED_FEEDBACK_CODE)
-                    if (FeedbackLEDControl.LedFeedbackEnabled == LED_FEEDBACK_ENABLED_FOR_SEND) {
-                        setFeedbackLED(false);
-                    }
+				if (FeedbackLEDControl.LedFeedbackEnabled == LED_FEEDBACK_ENABLED_FOR_SEND) {
+					setFeedbackLED(false);
+				}
 #  endif
 #endif
-                return;
-            }
-        } while (tMicros < tNextPeriodEnding);
-    } while (true);
+				return;
+			}
+		} while (tMicros < tNextPeriodEnding);
+	} while (true);
 #  endif
 }
 
@@ -838,30 +885,30 @@ void IRsend::mark(unsigned int aMarkMicros) {
  */
 void IRsend::IRLedOff() {
 #if defined(SEND_PWM_BY_TIMER)
-        DISABLE_SEND_PWM_BY_TIMER; // Disable PWM output
+	DISABLE_SEND_PWM_BY_TIMER; // Disable PWM output
 #elif defined(USE_NO_SEND_PWM)
 #  if defined(USE_OPEN_DRAIN_OUTPUT_FOR_SEND_PIN) && !defined(OUTPUT_OPEN_DRAIN)
-        digitalWriteFast(sendPin, LOW); // prepare for all next active states.
-        pinModeFast(sendPin, INPUT);// inactive state for open drain
+	digitalWriteFast(sendPin, LOW); // prepare for all next active states.
+	pinModeFast(sendPin, INPUT);// inactive state for open drain
 #  else
-        digitalWriteFast(sendPin, HIGH); // Set output to inactive high.
+	digitalWriteFast(sendPin, HIGH); // Set output to inactive high.
 #  endif
 #else
 #  if defined(USE_OPEN_DRAIN_OUTPUT_FOR_SEND_PIN)
 #    if defined(OUTPUT_OPEN_DRAIN)
-        digitalWriteFast(sendPin, HIGH); // Set output to inactive high.
+	digitalWriteFast(sendPin, HIGH); // Set output to inactive high.
 #    else
-        pinModeFast(sendPin, INPUT); // inactive state to mimic open drain
+	pinModeFast(sendPin, INPUT); // inactive state to mimic open drain
 #    endif
 #  else
-    digitalWriteFast(sendPin, LOW);
+	digitalWriteFast(sendPin, LOW);
 #  endif
 #endif
 
 #if !defined(NO_LED_FEEDBACK_CODE)
-    if (FeedbackLEDControl.LedFeedbackEnabled == LED_FEEDBACK_ENABLED_FOR_SEND) {
-        setFeedbackLED(false);
-    }
+	if (FeedbackLEDControl.LedFeedbackEnabled == LED_FEEDBACK_ENABLED_FOR_SEND) {
+		setFeedbackLED(false);
+	}
 #endif
 }
 
@@ -870,7 +917,7 @@ void IRsend::IRLedOff() {
  * A space is "no output", so just wait.
  */
 void IRsend::space(unsigned int aSpaceMicros) {
-    customDelayMicroseconds(aSpaceMicros);
+	customDelayMicroseconds(aSpaceMicros);
 }
 
 /**
@@ -879,13 +926,13 @@ void IRsend::space(unsigned int aSpaceMicros) {
  */
 void IRsend::customDelayMicroseconds(unsigned long aMicroseconds) {
 #if defined(__AVR__)
-    unsigned long start = micros() - (64 / clockCyclesPerMicrosecond()); // - (64 / clockCyclesPerMicrosecond()) for reduced resolution and additional overhead
+	unsigned long start = micros() - (64 / clockCyclesPerMicrosecond()); // - (64 / clockCyclesPerMicrosecond()) for reduced resolution and additional overhead
 #else
-        unsigned long start = micros();
+	unsigned long start = micros();
 #endif
-// overflow invariant comparison :-)
-    while (micros() - start < aMicroseconds) {
-    }
+	// overflow invariant comparison :-)
+	while (micros() - start < aMicroseconds) {
+	}
 }
 
 /**
@@ -896,43 +943,43 @@ void IRsend::customDelayMicroseconds(unsigned long aMicroseconds) {
  */
 void IRsend::enableIROut(uint_fast8_t aFrequencyKHz) {
 #if defined(SEND_PWM_BY_TIMER)
-        timerConfigForSend(aFrequencyKHz); // must set output pin mode and disable receive interrupt if required, e.g. uses the same resource
+	timerConfigForSend(aFrequencyKHz); // must set output pin mode and disable receive interrupt if required, e.g. uses the same resource
 
 #elif defined(USE_NO_SEND_PWM)
-        (void) aFrequencyKHz;
+	(void)aFrequencyKHz;
 
 #else
-    periodTimeMicros = (1000U + (aFrequencyKHz / 2)) / aFrequencyKHz; // rounded value -> 26 for 38.46 kHz, 27 for 37.04 kHz, 25 for 40 kHz.
+	periodTimeMicros = (1000U + (aFrequencyKHz / 2)) / aFrequencyKHz; // rounded value -> 26 for 38.46 kHz, 27 for 37.04 kHz, 25 for 40 kHz.
 #  if defined(IR_SEND_PIN)
-        periodOnTimeMicros = (((periodTimeMicros * IR_SEND_DUTY_CYCLE_PERCENT) + 50) / 100U); // +50 for rounding -> 830/100 for 30% and 16 MHz
+	periodOnTimeMicros = (((periodTimeMicros * IR_SEND_DUTY_CYCLE_PERCENT) + 50) / 100U); // +50 for rounding -> 830/100 for 30% and 16 MHz
 #  else
-// Heuristics! We require a nanosecond correction for "slow" digitalWrite() functions
-    periodOnTimeMicros = (((periodTimeMicros * IR_SEND_DUTY_CYCLE_PERCENT) + 50 - (PULSE_CORRECTION_NANOS / 10)) / 100U); // +50 for rounding -> 530/100 for 30% and 16 MHz
+	// Heuristics! We require a nanosecond correction for "slow" digitalWrite() functions
+	periodOnTimeMicros = (((periodTimeMicros * IR_SEND_DUTY_CYCLE_PERCENT) + 50 - (PULSE_CORRECTION_NANOS / 10)) / 100U); // +50 for rounding -> 530/100 for 30% and 16 MHz
 #  endif
 #endif // defined(SEND_PWM_BY_TIMER)
 
 #if defined(USE_OPEN_DRAIN_OUTPUT_FOR_SEND_PIN) && defined(OUTPUT_OPEN_DRAIN) // the mode INPUT for mimicking open drain is set at IRLedOff()
 #  if defined(IR_SEND_PIN)
-        pinModeFast(IR_SEND_PIN, OUTPUT_OPEN_DRAIN);
+	pinModeFast(IR_SEND_PIN, OUTPUT_OPEN_DRAIN);
 #  else
-        pinModeFast(sendPin, OUTPUT_OPEN_DRAIN);
+	pinModeFast(sendPin, OUTPUT_OPEN_DRAIN);
 #  endif
 #else
 
-// For Non AVR platforms pin mode for SEND_PWM_BY_TIMER must be handled by the timerConfigForSend() function
-// because ESP 2.0.2 ledcWrite does not work if pin mode is set, and RP2040 requires gpio_set_function(IR_SEND_PIN, GPIO_FUNC_PWM);
+	// For Non AVR platforms pin mode for SEND_PWM_BY_TIMER must be handled by the timerConfigForSend() function
+	// because ESP 2.0.2 ledcWrite does not work if pin mode is set, and RP2040 requires gpio_set_function(IR_SEND_PIN, GPIO_FUNC_PWM);
 #  if defined(__AVR__) || !defined(SEND_PWM_BY_TIMER)
 #    if defined(IR_SEND_PIN)
-        pinModeFast(IR_SEND_PIN, OUTPUT);
+	pinModeFast(IR_SEND_PIN, OUTPUT);
 #    else
-    pinModeFast(sendPin, OUTPUT);
+	pinModeFast(sendPin, OUTPUT);
 #    endif
 #  endif
 #endif // defined(USE_OPEN_DRAIN_OUTPUT_FOR_SEND_PIN)
 }
 
 unsigned int IRsend::getPulseCorrectionNanos() {
-    return PULSE_CORRECTION_NANOS;
+	return PULSE_CORRECTION_NANOS;
 }
 
 /** @}*/
